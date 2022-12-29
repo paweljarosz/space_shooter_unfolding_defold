@@ -1,0 +1,7 @@
+sound: "/assets/wav/explosion.wav"
+looping: 0
+group: "master"
+gain: 1.0
+pan: 1.0
+speed: 1.0
+loopcount: 0

@@ -1,0 +1,27 @@
+-- The init() function is called at the beginning of the component life
+function init(self)
+	go.animate(".", "position.y", go.PLAYBACK_ONCE_FORWARD, 1000, go.EASING_LINEAR, 2, 0, function()	-- <1>
+		go.delete()		-- <1.1>
+	end)
+end
+
+-- The on_message() function is called when the component receives any message.
+function on_message(self, message_id, message, sender)
+	if message_id == hash("trigger_response") and message.enter then	-- <2>
+		particlefx.play("#explosion")		-- <2.1>
+		go.delete()							-- <2.2>
+	end
+end
+
+--[[ Code explanations:
+In init():
+1. Animate the game object's (".") position in Y axis ("position.y") to 1000 (somwhere above),
+	in 2 seconds after 0 s of delay in linear easing and only once forward to 1000.
+	After this animation is done (after 2 seconds), the object will call a callback function in which:
+	1.1. The game object (by default this game object) will be deleted.
+
+In on_message():
+2. If the received message has message_id "trigger_response" and value "enter" is true:
+	2.1. Play a particle fx component of this game object called "explosion".
+	2.2. Delete this game object.
+]]

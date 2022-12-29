@@ -1,0 +1,41 @@
+-- The init() function is called at the beginning of the component life
+function init(self)
+	msg.post(".", "acquire_input_focus") -- <1>
+	sound.play("#background")			 -- <2>
+	timer.delay(1, true, function()		 -- <3>
+		factory.create("#factory")		 -- <3.1>
+		sound.play("#shot")				 -- <3.2>
+	end)
+end
+
+-- The on_input() function is called when the component receives any input.
+-- Don't forget to specify the action_ids in the input/game.input_binding file.
+function on_input(self, action_id, action)
+	if action_id == hash("left") then		 -- <4>
+		local pos = go.get_position()		 -- <4.1>
+		pos.x = pos.x - 5					 -- <4.2>
+		go.set_position(pos)				 -- <4.3>
+	elseif action_id == hash("right") then	 -- <5>
+		local pos = go.get_position()
+		pos.x = pos.x + 5					 -- <5.1>
+		go.set_position(pos)
+	end
+end
+
+--[[ Code explanations:
+In init():
+1. Tell this game object ("." shorthand) to acquire any inputs.
+	The inputs will be sent to this script and can be handled in on_input().
+2. Play the background music (that is looped forever).
+3. Start a timer every 1 second, that will be looped (true), with a callback function in which:
+	3.1. Create a bullet from the factory of bullets.
+	3.2. Play a shot sound of a rocket being shot out of the ship.
+
+In on_input():
+4. If received input's action_id is "left":
+	4.1. Get a current position of the game object and store it in variable "pos".
+	4.2. Subtract a little bit from its X coordinate value.
+	4.3. Set the newly changed position to the game object (so it will move left).
+5. Otherwise, if received input's action_id is "right": 
+	5.2. Basically do the same, but instead of subtraction use addition (so it will move right).
+]]

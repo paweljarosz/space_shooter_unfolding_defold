@@ -1,0 +1,36 @@
+-- The init() function is called at the beginning of the component life
+function init(self)
+	local pos = go.get_position()	-- <1>
+	pos.x = pos.x + 50				-- <2>
+	pos.y = pos.y + 20				-- <3>
+	go.animate(".", "position.x", go.PLAYBACK_LOOP_PINGPONG, pos.x, go.EASING_INOUTSINE, 3)		-- <4>
+	go.animate(".", "position.y", go.PLAYBACK_LOOP_PINGPONG, pos.y, go.EASING_INOUTSINE, 3, 1)	-- <5>
+end
+
+-- The on_message() function is called when the component receives any message.
+function on_message(self, message_id, message, sender)
+	if message_id == hash("trigger_response") and message.enter then	-- <6>
+		sound.play("#boom")												-- <6.1>
+		msg.post("interface#main", "enemy_death")						-- <6.2>
+		sprite.play_flipbook("#sprite", "enemy_death", function()		-- <6.3>
+			go.delete()													-- <6.3.1>
+		end)
+	end
+end
+
+--[[ Code explanations:
+In init() (I added init() after the tutorial, to animate the enemy position in an elipse):
+1. Get a current game object's position and save it in "pos" variable.
+2. Change the saved "pos" on X coordinate a little bit (offset).
+3. Change the saved "pos" on Y coordinate a little bit (offset).
+4. Animate the position on X axis to the saved "pos" and back (ping pong) value in 3 seconds with sinusoidal easing.
+5. Animate the position on Y axis to the saved "pos" and back (ping pong) value in 3 seconds with sinusoidal easing, after a delay of 1 s.
+
+In on_message():
+6. If the received message has message_id "trigger_response" and value "enter" is true:
+	6.1. Play a sound of this game object called "boom".
+	6.2. Send a message to the "interface#main" (which is GUI component called "main" of game object called "interface")
+		with message_id "enemy_death" to inform the GUI, that player hit the enemy and should be awarded.
+	6.3. Play a flipbook animation of component "sprite" called "enemy_death", after which call a callback function in which:
+		6.3.1. Delete this game object.
+]]
